@@ -24,7 +24,7 @@ export class AppController {
 	public async signup(@Req() req, @Res() res, @Next() next) {
 		await passport.authenticate('local-signup', {
 		},(err, user, info)=>{
-			console.log('signuPPPP - ', info)
+			
 			if(err) {
 				throw err;
 			}
@@ -41,7 +41,7 @@ export class AppController {
 	public async login(@Req() req, @Res() res, @Next() next) {
 		await passport.authenticate('local-login', {
 		},(err, user, info)=>{
-			console.log('signuPPPP - ', info)
+			
 			if(err) {
 				throw err;
 			}

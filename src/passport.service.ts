@@ -39,14 +39,14 @@ export class PassportService {
 		}
 
 		const localSignup = new Local.Strategy(localStrategySetting, (req, email, password, done)=>{
-			console.log('2');
+			
 			process.nextTick(()=>{
 				this.localSignup(req, email, password, done);
 			});
 		});
 
 		const localLogin = new Local.Strategy(localStrategySetting, (req, email, password, done)=>{
-			console.log('2');
+			
 			process.nextTick(()=>{
 				this.localLogin(req, email, password, done);
 			});
@@ -71,8 +71,7 @@ export class PassportService {
 	}
 
 	localSignup(req, email, password, done){
-		console.log('localSignup', email, password);
-
+		
 		if(password.length < 5){
 			return done(null, false, 'password to short');
 		}
@@ -110,8 +109,7 @@ export class PassportService {
 	}
 
 	localLogin(req, email, password, done){
-		console.log('localLogin', email, password);
-
+		
 		Users.findOne({'local.email': email}, (mongoErr, user)=>{
 			if(mongoErr){
 				done(mongoErr);
