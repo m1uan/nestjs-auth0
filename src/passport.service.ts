@@ -6,6 +6,11 @@ import {Users} from './models/Users';
 
 import 'dotenv/config';
 
+import * as jwt from 'jsonwebtoken';
+import * as randomtoken from 'random-token';
+import * as crypto from 'crypto';
+
+
 export class PassportService {
 	constructor(private passport){
 				// This will configure Passport to use Auth0
@@ -62,10 +67,12 @@ export class PassportService {
 
 		// you can use this section to keep a smaller payload
 		passport.serializeUser((user, done) => {
-			done(null, user)
+			console.log('passport.serializeUser', user)
+			done(null, user);
 		})
 
 		passport.deserializeUser((user, done) => {
+			console.log('passport.deserializeUser', user)
 			done(null, user);
 		})
 	}
@@ -108,8 +115,17 @@ export class PassportService {
 		
 	}
 
-	localLogin(req, email, password, done){
+	/**
+	 * 
+	 * @param req 
+	 * @param email 
+	 * @param password 
+	 * @param options 
+	 * @param done 
+	 */
+	localLogin(req, email, password, options, done){
 		
+
 		Users.findOne({'local.email': email}, (mongoErr, user)=>{
 			if(mongoErr){
 				done(mongoErr);
@@ -118,10 +134,21 @@ export class PassportService {
 			let valid = user.validPassword(password);
 
 			if(valid){
-				return done(null, user);
+
+				user.refreshToken = randomtoken(24);
+				user.save(()=>{
+					let encryptedRefreshToken = user.encryptRefreshToken(user.refreshToken);
+					console.log(user.refreshToken, encryptedRefreshToken);
+					user.refreshToken = encryptedRefreshToken;
+					user.local.password = undefined;
+					return done(null, user);
+				})
+				
+			} else {
+				done(null, false);
 			}
 
-			done(null, false);
+			
 		});
 
 		

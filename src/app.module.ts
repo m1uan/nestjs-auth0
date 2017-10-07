@@ -1,9 +1,10 @@
 import { Module, MiddlewaresConsumer, RequestMethod } from '@nestjs/common';
 import { EnsureLoggedIn } from './app.middleware';
 import { AppController } from './app.controller';
-
+import { UsersService } from './users.service'
 @Module({
-    controllers: [ AppController ]
+	controllers: [ AppController ],
+	components: [ UsersService ]
 })
 
 export class ApplicationModule {

@@ -14,7 +14,12 @@ import * as mongoose from 'mongoose';
 
 const app = express();
 
-new PassportService(passport);
+const corsConfig = {
+  origin: ['http://example.com','http://localhost:3001'], 
+  credentials: true
+}
+
+//new PassportService(passport);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -22,29 +27,24 @@ app.set('view engine', 'pug');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cors());
+app.use(cors(corsConfig));
 
-app.use(cookieParser());
-app.use(session({
-  secret: 'shhhhhhhhh',
-  resave: true,
-  saveUninitialized: true,
-  cookie: { secure: true }
-}));
+// app.use(cookieParser());
+// app.use(session({
+//   secret: 'shhhhhhhhh',
+//   resave: true,
+//   saveUninitialized: true,
+//   cookie: { secure: true }
+// }));
 
-app.use(flash());
 
-// Init passport authentication
-app.use(passport.initialize());
-// persistent login sessions
-app.use(passport.session());
+// // Init passport authentication
+// app.use(passport.initialize());
+// // persistent login sessions
+// app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'assets')));
 
-app.use((req, res, next)=>{
-  console.log(req.flash('message'));
-  console.log(req.flash('signupMessage'));
-  next();
-})
+
 
 
 const nest = NestFactory.create(ApplicationModule, app);

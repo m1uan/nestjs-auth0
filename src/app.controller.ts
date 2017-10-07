@@ -2,6 +2,8 @@ import { Controller, Get, Post, Req, Res, Next, HttpStatus,  } from '@nestjs/com
 
 import * as passport from 'passport';
 import 'dotenv/config';
+import * as jwt from 'jsonwebtoken';
+import * as randomtoken from 'random-token';
 
 @Controller()
 export class AppController {
@@ -37,7 +39,7 @@ export class AppController {
 		})(req, res, next);
 	}
 
-	@Post('/login')
+	@Post('/api/login')
 	public async login(@Req() req, @Res() res, @Next() next) {
 		await passport.authenticate('local-login', {
 		},(err, user, info)=>{
@@ -47,7 +49,10 @@ export class AppController {
 			}
 
 			if(user) {
-				res.json(user);
+				var token = jwt.sign(user.toObject(), 'process.env.JWT_TOKEN_SECRET', {
+					expiresIn: '24h' // expires in 24 hours
+				  });
+				res.json({user, token: token});
 			} else {
 				res.status(HttpStatus.UNAUTHORIZED).json(info);
 			}
@@ -88,8 +93,9 @@ export class AppController {
 	   	res.redirect('/');
 	}
 
-	@Get('/user')
+	@Get('/api/user')
 	public user(@Req() req, @Res() res) {
-		res.render('user', { 'user': req.user });
+		console.log(req.user);
+		res.json({ 'user': req.user, 'ahoj': req.session });
 	}
 }
